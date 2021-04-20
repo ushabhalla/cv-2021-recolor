@@ -1,12 +1,14 @@
 import os
-from skimage import io, img_as_ubyte
-import numpy as np
-from sklearn.cluster import KMeans
 import argparse
-import random
+import numpy as np
+from skimage import io, img_as_ubyte
+from sklearn.cluster import KMeans
+
 
 def parse_args():
-    "Allow user to specify image, k, and output"
+    """
+    Allow user to specify image, k, and output
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', help='path to data file', default='../data/irises.jpeg')
     parser.add_argument('-k', help='number of image cluster from [4,7]', type=int, default=4)
@@ -35,7 +37,7 @@ def naive_recolor(image, clustered_image, indices, new_colors):
 
 
 
-def paper_thing:
+def paper_thing():
     """
     first init kmeans with white and black cluster centers with init
 
@@ -59,12 +61,13 @@ def main():
     kmeans.fit(X)
 
     centroids = kmeans.cluster_centers_
+    print(centroids)
     idx = kmeans.labels_
     X_recovered = centroids[idx]
     X_recovered = np.reshape(X_recovered, (image.shape[0], image.shape[1], 3))
 
     print("Recoloring")
-    new_colors = [[186, 199, 219], [116, 96, 150], [96, 138, 55], [40, 69, 11]]
+    new_colors = [[186, 199, 219], [116, 96, 150], [209, 145, 82], [220, 232, 209]]
     new_colors = np.array(new_colors)/255
     X_recovered = naive_recolor(image, X_recovered, idx, new_colors)
     X_recovered = np.clip(X_recovered, 0, 1)
