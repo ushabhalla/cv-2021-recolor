@@ -35,16 +35,33 @@ def naive_recolor(image, clustered_image, indices, new_colors):
             image[i, j] += new_colors[indices[i, j]]
     return image
 
+def assign_new_colors_by_luminance(centroids, new_colors):
+    centroid_luminance = []
+    new_luminance = []
+    new_colors_sorted = np.zeros((new_colors.shape[0], new_colors.shape[1]))
+    # calculate luminance
+    for i in range(centroids.shape[0]):
+        centroid_luminance.append(0.2126*centroids[i, 0] + 0.7152*centroids[i, 1] + 0.0722*centroids[i, 2])
+        new_luminance.append(0.2126*new_colors[i, 0] + 0.7152*new_colors[i, 1] + 0.0722*new_colors[i, 2])
+    centroid_indices = np.argsort(centroid_luminance)
+    new_color_indices = np.argsort(new_luminance)
+    # reassign indices of new_color to match centroids
+    for index in new_color_indices:
+        new_colors_sorted[centroid_indices[index], :] = new_colors[new_color_indices[index], :]
+    return new_colors_sorted
 
+def cluster(args, image):
+    print("Clustering")
 
-def paper_thing():
-    """
-    first init kmeans with white and black cluster centers with init
+    X = image.reshape(image.shape[0]*image.shape[1], 3)
+    K = args.k
 
-    """
-    pass
+    kmeans = KMeans(n_clusters=K, max_iter=20)
+    kmeans.fit(X)
+    centroids = kmeans.cluster_centers_
+    print(centroids)
 
-
+    return kmeans, centroids
 
 def main():
     args = parse_args()
@@ -52,16 +69,8 @@ def main():
     image = io.imread(args.d)
     image = image/255
 
-    X = image.reshape(image.shape[0]*image.shape[1], 3)
-    K = args.k
+    kmeans, centroids = cluster(args, image)
 
-
-    print("Clustering")
-    kmeans = KMeans(n_clusters=K, max_iter=20)
-    kmeans.fit(X)
-
-    centroids = kmeans.cluster_centers_
-    print(centroids)
     idx = kmeans.labels_
     X_recovered = centroids[idx]
     X_recovered = np.reshape(X_recovered, (image.shape[0], image.shape[1], 3))
@@ -69,6 +78,7 @@ def main():
     print("Recoloring")
     new_colors = [[186, 199, 219], [116, 96, 150], [209, 145, 82], [220, 232, 209]]
     new_colors = np.array(new_colors)/255
+    new_colors = assign_new_colors_by_luminance(centroids, new_colors)
     X_recovered = naive_recolor(image, X_recovered, idx, new_colors)
     X_recovered = np.clip(X_recovered, 0, 1)
 
