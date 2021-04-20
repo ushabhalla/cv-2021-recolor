@@ -5,10 +5,14 @@ from sklearn.cluster import KMeans
 import argparse
 import random
 
+
 def parse_args():
-    parser = argparse.ArgumentParser(description='Machine Learning img_compression (Problem 1)')
-    parser.add_argument('-d', help='path to data file', default='../data/cezanne.jpg')
-    parser.add_argument('-o', help='path to output directory', default='output')
+    parser = argparse.ArgumentParser(
+        description='Machine Learning img_compression (Problem 1)')
+    parser.add_argument('-d', help='path to data file',
+                        default='../data/field.jpeg')
+    parser.add_argument(
+        '-o', help='path to output directory', default='output')
     return parser.parse_args()
 
 
@@ -39,14 +43,14 @@ def main():
     cols = image.shape[1]
     # Normalize all the pixels by dividing all datapoints by 255
     image = image/255
-    
-    #make sure image is 3 dimensions, not 4    
+
+    # make sure image is 3 dimensions, not 4
     dimension = image.shape[-1]
     print('image dimension is:', dimension)
 
     if dimension != 3:
         if (dimension == 4):
-            image = image[:,:,:3]
+            image = image[:, :, :3]
         else:
             print('image is not valid')
 
@@ -64,7 +68,7 @@ def main():
     print("Running k-means")
     centroids = kmeans.cluster_centers_
     idx = kmeans.labels_
-    
+
     if not os.path.exists(args.o):
         os.makedirs(args.o)
 
