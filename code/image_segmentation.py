@@ -103,14 +103,15 @@ def run_clustering(k, image):
 
     print("Recoloring")
     # let user pick all colors
-    # new_colors = [[186, 199, 219], [116, 96, 150],
-    #               [209, 145, 82], [220, 232, 209]]
-    # new_colors = assign_new_colors_by_luminance(centroids, new_colors)
+    new_colors = [[186, 199, 219], [116, 96, 150],
+                  [209, 145, 82], [220, 232, 209]]
+    new_colors = assign_new_colors_by_luminance(centroids, new_colors)
 
     # naive palette picker given one color
-    new_color = [247, 146, 242]
-    new_colors = naive_palette(centroids, new_color)
+    # new_color = [247, 146, 242]
+    # new_colors = naive_palette(centroids, new_color)
 
+    # recolor image
     X_recovered = naive_recolor(image, X_recovered, idx, new_colors)
     X_recovered = np.clip(X_recovered, 0, 1)
     print("Output saved to output/" + "output.jpeg")
