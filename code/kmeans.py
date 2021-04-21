@@ -4,11 +4,11 @@ import math
 
 
 class Kmeans:
-    def __init__(self, X, n_clusters, max_iter):
-        self.X = X
+    def __init__(self, n_clusters, max_iter):
+        self.X = None
         self.K = n_clusters
         self.max_iter = max_iter
-        self.cluster_centers_ = self.init_centroids()
+        self.cluster_centers_ = None
         self.labels_ = None
 
     def init_centroids(self):
@@ -64,7 +64,9 @@ class Kmeans:
         return True
 
 
-    def fit(self):
+    def fit(self, X):
+        self.X = X
+        self.cluster_centers_ = self.init_centroids()
         foo = False
         for i in range(self.max_iter):
             if (not foo):

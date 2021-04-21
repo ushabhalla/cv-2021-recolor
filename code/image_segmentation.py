@@ -6,6 +6,7 @@ from sklearn.cluster import KMeans
 import random
 import string
 import recolor
+from kmeans import Kmeans
 
 
 def parse_args():
@@ -14,7 +15,7 @@ def parse_args():
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', help='path to data file',
-                        nargs='?', default='../data/irises.jpeg')
+                        nargs='?', default='static/irises.jpeg')
     parser.add_argument(
         '-k', help='number of image cluster from [4,7]', nargs='?', type=int, default=4)
     parser.add_argument('-o', help='output image file',
@@ -34,7 +35,11 @@ def cluster(k, image):
     X = image.reshape(image.shape[0]*image.shape[1], 3)
     K = k
 
+    # sklearn implementation of KMeans
+    # switch line 40 with 41 for our implementation
     kmeans = KMeans(n_clusters=K, max_iter=5)
+    # kmeans = Kmeans(n_clusters=K, max_iter=5)
+
     kmeans.fit(X)
     centroids = kmeans.cluster_centers_
 
