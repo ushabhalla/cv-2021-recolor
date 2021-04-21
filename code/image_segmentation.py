@@ -22,6 +22,13 @@ def parse_args():
     return parser.parse_args()
 
 def cluster(k, image):
+    """
+    Runs k-means.
+
+    :param k: number of clusters
+    :param image: the image to perform k-means on
+    :return: the centroids and indices from the k-means model
+    """
     print("Clustering")
 
     X = image.reshape(image.shape[0]*image.shape[1], 3)
@@ -36,23 +43,30 @@ def cluster(k, image):
 
 
 def run_clustering(k, image, colors):
+    """
+    Calls k-means, then a recoloring algorithm.
+
+    :param k: number of clusters
+    :param image: the image to be recolored
+    :param colors: the new colors for the image
+    :return: the path where the recolored output is saved (necessary for gui)
+    """
     kmeans, centroids = cluster(k, image)
     idx = kmeans.labels_
     X_recovered = centroids[idx]
     X_recovered = np.reshape(X_recovered, (image.shape[0], image.shape[1], 3))
 
     print("Recoloring")
-    # new_colors = colors[:k]
-    # print(new_colors)
-    # new_colors = recolor.assign_new_colors_by_luminance(centroids, new_colors)
+    new_colors = colors[:k]
+    new_colors = recolor.assign_new_colors_by_luminance(centroids, new_colors)
     
     # # naive palette picker given one color
-    new_color = [247, 146, 242]
+    # new_color = [247, 146, 242]
     # new_colors = recolor.naive_palette(centroids, new_color)
-    new_colors = recolor.single_recolor(centroids, new_color)
+    # new_colors = recolor.single_recolor(centroids, new_color)
 
     # recolor image
-    X_recovered = recolor.naive_recolor(image, X_recovered, idx, new_colors)
+    X_recovered = recolor.recolor_image(image, X_recovered, idx, new_colors)
     X_recovered = np.clip(X_recovered, 0, 1)
     rand_str = lambda n: ''.join([random.choice(string.ascii_lowercase) for i in range(n)])
     # Now to generate a random string of length 10
@@ -63,9 +77,9 @@ def run_clustering(k, image, colors):
     print("Output saved to output/" + path)
 
     io.imsave(path, img_as_ubyte(X_recovered))
-    # io.imsave(path, img_as_ubyte(X_recovered))
     print("DONE")
     return path
+
 
 def main():
     args = parse_args()
