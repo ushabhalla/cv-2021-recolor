@@ -15,8 +15,6 @@ function go(){
 
     console.log("done go funct")
     document.getElementById("res-div").src = "kmeans_img"
-    document.getElementById("loading").classList.add("hidden");
-    document.getElementById("res-div").classList.add("hidden");
 
     $.ajax({
         type:    "POST",
@@ -33,7 +31,6 @@ function go(){
         },
         success: function(data) {
             load_image(data)
-            document.getElementById("res-div").classList.remove("hidden");
             alert("Data: " + data + "\nStatus: " + status);
         },
         // vvv---- This is the new bit
@@ -46,7 +43,7 @@ function go(){
 }
 
 function load_image(img_src) {
-    console.log('load image running')
+    console.log('load image running', img_src)
     $('#result_image').attr('src', img_src);
     // document.getElementById("result_image").src = img_src;
     console.log(img_src);
