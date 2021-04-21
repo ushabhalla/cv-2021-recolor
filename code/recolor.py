@@ -23,7 +23,7 @@ def recolor_image(image, clustered_image, indices, new_colors):
     :param new_colors: [k x 3] array of the new colors for each segment
     :return: an array of size image recolored
     """
-    # image = image_difference(image, clustered_image)
+    image = image_difference(image, clustered_image)
     # reshape indices to be same shape as image
     indices = np.reshape(indices, (image.shape[0], image.shape[1]))
     for i in range(clustered_image.shape[0]):
