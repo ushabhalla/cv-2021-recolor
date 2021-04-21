@@ -1,3 +1,40 @@
+// import '../static/main.css'
+
+var user_image_loaded = 0;
+var loadFile = function(event) {
+    var image = document.getElementById('output');
+    image.src = URL.createObjectURL(event.target.files[0]);
+    user_image = image.src; 
+    console.log('hello please log', user_image);
+};
+
+function readURL(input) 
+{
+    document.getElementById("bannerImg").style.display = "block";
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            document.getElementById('bannerImg').src =  e.target.result;
+        }
+        reader.readAsDataURL(input.files[0]);
+        user_image_loaded = 1;
+    }
+}
+
+function getBase64Image(img) {
+    var canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+
+    var dataURL = canvas.toDataURL("image/png");
+    console.log('this is datAURL', dataURL);
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+}
 
 function go(){
     // window.location.reload(true)
@@ -13,8 +50,18 @@ function go(){
     var col5 = document.getElementById("col5").value;
     var col6 = document.getElementById("col6").value;
 
+
     console.log("done go funct")
     document.getElementById("res-div").src = "kmeans_img"
+
+    user_image = document.getElementById('bannerImg');
+    imgData = getBase64Image(user_image);
+    console.log('this is the imgData:', imgData)
+    localStorage.setItem("imgData", imgData);
+
+    if (user_image_loaded == 1){
+        img = imgData;
+    }
 
     $.ajax({
         type:    "POST",
@@ -27,7 +74,8 @@ function go(){
             col3: col3,
             col4: col4,
             col5: col5,
-            col6: col6
+            col6: col6,
+            userImage: user_image_loaded,
         },
         success: function(data) {
             load_image(data)
