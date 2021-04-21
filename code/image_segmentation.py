@@ -86,13 +86,11 @@ def run_clustering(k, image):
     new_colors = assign_new_colors_by_luminance(centroids, new_colors)
     X_recovered = naive_recolor(image, X_recovered, idx, new_colors)
     X_recovered = np.clip(X_recovered, 0, 1)
-
-    io.imshow(X_recovered)
-    io.show()
-
     print("Output saved to output/" + "output.jpeg")
     io.imsave("output/" + "output.jpeg", img_as_ubyte(X_recovered))
-    return X_recovered
+    io.imsave("static/" + "output.jpeg", img_as_ubyte(X_recovered))
+    print("DONE")
+    return "static/output.jpeg"
 
 
 def main():
@@ -101,6 +99,10 @@ def main():
     image = io.imread(args.d)
     image = image/255
     run_clustering(args.k, image)
+
+    io.imshow("output/output.jpeg")
+    io.show()
+
     # webbrowser.open(
     #     'file://' + os.path.realpath('../frontend/index.html'), new=2)
 
