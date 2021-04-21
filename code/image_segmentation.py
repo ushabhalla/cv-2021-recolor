@@ -73,7 +73,6 @@ def assign_new_colors_by_luminance(centroids, new_colors):
 #             all_dists.append(centroids[i] - centroids[j])
 #     sigma_r = np.mean(all_dists)
 
-
 def naive_palette(centroids, new_color):
     """ Currently this just tints the image by whatever new_color is
     """
@@ -81,10 +80,12 @@ def naive_palette(centroids, new_color):
     index = 0
     new_colors = np.zeros((centroids.shape[0], centroids.shape[1]))
     # compare luminance to find where new_color should appear
-    new_luminance = 0.2126*new_color[0] + 0.7152*new_color[1] + 0.0722*new_color[2]
+    new_luminance = 0.2126*new_color[0] + \
+        0.7152*new_color[1] + 0.0722*new_color[2]
     min_dist = 10000000000
     for i in range(centroids.shape[0]):
-        centroid_luminance = 0.2126*centroids[i, 0] + 0.7152*centroids[i, 1] + 0.0722*centroids[i, 2]
+        centroid_luminance = 0.2126 * \
+            centroids[i, 0] + 0.7152*centroids[i, 1] + 0.0722*centroids[i, 2]
         if min_dist > abs(new_luminance - centroid_luminance):
             min_dist = abs(new_luminance - centroid_luminance)
             index = i
@@ -99,35 +100,35 @@ def naive_palette(centroids, new_color):
             # new_colors[i] = centroids[i]
     return new_colors
 
+
 def cluster(k, image):
     print("Clustering")
 
     X = image.reshape(image.shape[0]*image.shape[1], 3)
     K = k
 
-    kmeans = KMeans(n_clusters=K, max_iter=20)
+    kmeans = KMeans(n_clusters=K, max_iter=5)
     kmeans.fit(X)
     centroids = kmeans.cluster_centers_
-    print(centroids)
+    print("Centroids", centroids)
 
     return kmeans, centroids
 
 
-def run_clustering(k, image):
+def run_clustering(k, image, colors):
     kmeans, centroids = cluster(k, image)
     idx = kmeans.labels_
     X_recovered = centroids[idx]
     X_recovered = np.reshape(X_recovered, (image.shape[0], image.shape[1], 3))
 
     print("Recoloring")
-    # let user pick all colors
-    # new_colors = [[186, 199, 219], [116, 96, 150],
-    #               [209, 145, 82], [220, 232, 209]]
-    # new_colors = assign_new_colors_by_luminance(centroids, new_colors)
-
-    # naive palette picker given one color
-    new_color = [247, 146, 242]
-    new_colors = naive_palette(centroids, new_color)
+    new_colors = colors[:k]
+    print(new_colors)
+    new_colors = assign_new_colors_by_luminance(centroids, new_colors)
+    
+    # # naive palette picker given one color
+    # new_color = [247, 146, 242]
+    # new_colors = naive_palette(centroids, new_color)
 
     # recolor image
     X_recovered = naive_recolor(image, X_recovered, idx, new_colors)
@@ -144,7 +145,8 @@ def main():
 
     image = io.imread(args.d)
     image = image/255
-    run_clustering(args.k, image)
+    run_clustering(args.k, image, [[186, 199, 219], [116, 96, 150],
+                                   [209, 145, 82], [220, 232, 209]])
 
     io.imshow("output/output.jpeg")
     io.show()
