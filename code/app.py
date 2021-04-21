@@ -19,7 +19,7 @@ def get_javascript_data(jsdata):
     return curr_img
 
 
-@app.route('/postmethod', methods=['POST'])
+@app.route('/postmethodlol', methods=['POST'])
 def get_post_javascript_data():
     image = request.form['image']
     k = request.form['kk']
@@ -27,6 +27,7 @@ def get_post_javascript_data():
     img = io.imread(image)
     image = run_clustering(k, img)
     curr_img = image
+    print('post done')
     return image
 
 

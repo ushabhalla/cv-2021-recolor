@@ -65,7 +65,7 @@ def cluster(k, image):
     X = image.reshape(image.shape[0]*image.shape[1], 3)
     K = k
 
-    kmeans = KMeans(n_clusters=K, max_iter=20)
+    kmeans = KMeans(n_clusters=K, max_iter=5)
     kmeans.fit(X)
     centroids = kmeans.cluster_centers_
     print(centroids)
