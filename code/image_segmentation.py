@@ -1,10 +1,12 @@
 import os
 import argparse
 import numpy as np
-from skimage import io, img_as_ubyte
+from skimage import io, img_as_ubyte, filters
 from sklearn.cluster import KMeans
 import random
 import string
+import math
+from kmeans import Kmeans
 import recolor
 from kmeans import Kmeans
 
@@ -21,6 +23,7 @@ def parse_args():
     parser.add_argument('-o', help='output image file',
                         nargs='?', default='output.jpg')
     return parser.parse_args()
+
 
 def cluster(k, image):
     """
@@ -59,22 +62,32 @@ def run_clustering(k, image, colors):
     idx = kmeans.labels_
     X_recovered = centroids[idx]
     X_recovered = np.reshape(X_recovered, (image.shape[0], image.shape[1], 3))
+    edges = get_edges(image)
+    # idx, centroids = run_kmeans(k, image)
+    # X_recovered = centroids[idx]
+    # X_recovered = np.reshape(X_recovered, (image.shape[0], image.shape[1], 3))
 
     print("Recoloring")
-    # new_colors = colors[:k]
-    # new_colors = recolor.assign_new_colors_by_luminance(centroids, new_colors)
-    
+    new_colors = colors[:k]
+    # print(new_colors)
+    new_colors = recolor.assign_new_colors_by_luminance(centroids, new_colors)
+
     # # naive palette picker given one color
     new_color = [247, 146, 242]
     # new_colors = recolor.naive_palette(centroids, new_color)
-    new_colors = recolor.single_recolor(centroids, new_color)
+    # new_colors = recolor.single_recolor(centroids, new_color)
 
+    # # new coloring algorithm
+    # new_color = [247, 146, 242]
+    # new_colors = assign_colors_by_frequency(image, centroids, new_color)
     # recolor image
     X_recovered = recolor.recolor_image(image, X_recovered, idx, new_colors)
     X_recovered = np.clip(X_recovered, 0, 1)
-    rand_str = lambda n: ''.join([random.choice(string.ascii_lowercase) for i in range(n)])
+
+    def rand_str(n): return ''.join(
+        [random.choice(string.ascii_lowercase) for i in range(n)])
     # Now to generate a random string of length 10
-    s = rand_str(10)  
+    s = rand_str(10)
 
     path = "static/" + s + ".jpeg"
     print("Output saved to output/" + path)
@@ -84,13 +97,23 @@ def run_clustering(k, image, colors):
     return path
 
 
+def get_edges(image):
+    image = np.dot(image[..., :3], [.2989, .5870, .1140])
+    x_sobel = filters.sobel_v(image)
+    y_sobel = filters.sobel_h(image)
+    magnitude = np.sqrt(np.power(x_sobel, 2)+np.power(y_sobel, 2))
+    maximum = max(map(max, magnitude))
+    magnitude /= maximum
+    return magnitude
+
+
 def main():
     args = parse_args()
 
     image = io.imread(args.d)
     image = image/255
     path = run_clustering(args.k, image, [[186, 199, 219], [116, 96, 150],
-                                   [209, 145, 82], [220, 232, 209]])
+                                          [209, 145, 82], [220, 232, 209]])
 
     io.imshow(path)
     io.show()
