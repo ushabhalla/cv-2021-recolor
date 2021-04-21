@@ -13,11 +13,11 @@
 <body>
 
 <div class="header">
-    <h3>Art Color Picker</h3>
+    <h2>ART COLOR PICKER</h2>
 </div>
 
-<div>
-<h3>Image Options:</h3>
+<div class="justify-content-center box">
+<h3 style=" text-align: center;">Image Options:</h3>
 <img src="static/field.jpeg" class="img-option" id="1">
 <img src="static/irises.jpeg" class="img-option" id="2">
 <img src="static/lotus.jpeg" class="img-option" id="3">
@@ -25,9 +25,9 @@
 <img src="static/trees.jpeg" class="img-option" id="5">
 </div>
 
-<div >
+<div class="box">
     <div class="col-6">
-    <h4>Choose number of colors:</h4>
+    <h4>CHOOSE NUMBER OF COLORS</h4>
     <select name="kmeans" id="kmeansval">
         <option value="3">3</option>
         <option value="4">4</option>
@@ -36,7 +36,17 @@
       </select>
     </div>
     <div class="col-6">
-        <h4>Choose image:</h4>
+        <h4>CHOOSE YOUR COLORS</h4>
+        <input type="color" id="col1" value="#E1F5C4">
+        <input type="color" id="col2" value="#EDE574">
+        <input type="color" id="col3" value="#F9D423">
+        <input type="color" id="col4" value="#FC913A">
+        <input type="color" id="col5" value="#FF4E50">
+        <input type="color" id="col6" value="#594F4F">
+
+    </div>
+    <div class="col-6">
+        <h4>CHOOSE YOUR IMAGE</h4>
         <select name="imgselector" id="imgpath">
             <option value="static/field.jpeg">1</option>
             <option value="static/irises.jpeg">2</option>
@@ -47,14 +57,14 @@
     </div>
 </div>
 
-<div>
+<div class="box">
     <h3>GO!</h3>
     <button onclick=go()>GO</button>
 </div>
 
-<div id="loading" class="loading hidden"></div>
-<div id="res-div" class="hidden">RESULT:
-    <img src="/static/output.jpeg" class="img-result">
+<div id="loading" class="loading hidden box"></div>
+<div id="res-div" class="hidden box">RESULT:
+    <img src="" class="img-result">
 </div>
 
 <script type="text/javascript" src="static/main.js"></script>

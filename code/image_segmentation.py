@@ -68,20 +68,19 @@ def cluster(k, image):
     kmeans = KMeans(n_clusters=K, max_iter=20)
     kmeans.fit(X)
     centroids = kmeans.cluster_centers_
-    print(centroids)
+    print("Centroids", centroids)
 
     return kmeans, centroids
 
 
-def run_clustering(k, image):
+def run_clustering(k, image, colors):
     kmeans, centroids = cluster(k, image)
     idx = kmeans.labels_
     X_recovered = centroids[idx]
     X_recovered = np.reshape(X_recovered, (image.shape[0], image.shape[1], 3))
 
     print("Recoloring")
-    new_colors = [[186, 199, 219], [116, 96, 150],
-                  [209, 145, 82], [220, 232, 209]]
+    new_colors = colors[:k]
     new_colors = np.array(new_colors)/255
     new_colors = assign_new_colors_by_luminance(centroids, new_colors)
     X_recovered = naive_recolor(image, X_recovered, idx, new_colors)
@@ -98,7 +97,8 @@ def main():
 
     image = io.imread(args.d)
     image = image/255
-    run_clustering(args.k, image)
+    run_clustering(args.k, image, [[186, 199, 219], [116, 96, 150],
+                                   [209, 145, 82], [220, 232, 209]])
 
     io.imshow("output/output.jpeg")
     io.show()
