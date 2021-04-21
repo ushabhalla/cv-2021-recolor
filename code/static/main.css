@@ -1,3 +1,8 @@
+body {
+  margin-left: 300px;
+  margin-right: 300px;
+}
+
 .img-option {
   width: 200px;
   height: 200px;
@@ -9,6 +14,9 @@
   color: white;
   padding: 4px;
   font-style: italic;
+  margin-left: -300px;
+  margin-right: -300px;
+  text-align: center;
 }
 
 .img-result {
@@ -35,6 +43,7 @@
   margin: 20px;
   font-family: Helvetica;
   font-weight: 200;
+  text-align: center;
 }
 
 h3 {
@@ -49,6 +58,10 @@ h2 {
   font-family: Helvetica;
   font-style: italic;
   font-weight: bold;
+}
+
+input[type="file"] {
+  display: inline-block;
 }
 
 /* UPLOAD FILE */
