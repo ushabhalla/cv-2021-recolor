@@ -2,7 +2,8 @@ from flask import Flask, render_template, request
 import json
 
 from image_segmentation import run_clustering
-from skimage import io, img_as_ubyte
+from skimage import io as io_skimage
+from skimage import img_as_ubyte
 import matplotlib.colors
 
 from PIL import Image
@@ -43,32 +44,34 @@ def get_post_javascript_data():
     col6 = matplotlib.colors.to_rgb(request.form['col6'])
     c6 = [col6[0]*255, col6[1]*255, col6[2]*255]
     colors = [c1, c2, c3, c4, c5, c6]
+    user_image_loaded = request.form['userImage']
 
     print(colors)
+    print('image true?', user_image_loaded)
     k = int(k)
-    print('image before:', image)
 
-    im = Image.open(BytesIO(base64.b64decode(image)))
-    im.save('image.png', 'PNG')
-
-    img = io.imread('image.png')
-
+    # print('image before:', image)
+    if (user_image_loaded == '1'):
+        im = Image.open(BytesIO(base64.b64decode(image)))
+        im.save('image.png', 'PNG')
+        img = io_skimage.imread('image.png')
+    else:
+        print('this is running')
+        img = io_skimage.imread(image)
+    
     img = img/255
     #make sure image is 3 dimensions, not 4    
     dimension = img.shape[-1]
     print('image dimension is:', dimension)
-
     if dimension != 3:
         if (dimension == 4):
             img = img[:,:,:3]
         else:
             print('image is not valid')
 
-    print('this is the image before clustiner:', img)
-    image = run_clustering(k, img, colors)
+    outout_image = run_clustering(k, img, colors)
     print('post done')
-    return image
-
+    return outout_image
 
 if __name__ == '__main__':
     app.run()

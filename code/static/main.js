@@ -1,6 +1,6 @@
 // import '../static/main.css'
 
-var user_image = null;
+var user_image_loaded = 0;
 var loadFile = function(event) {
     var image = document.getElementById('output');
     image.src = URL.createObjectURL(event.target.files[0]);
@@ -19,6 +19,7 @@ function readURL(input)
             document.getElementById('bannerImg').src =  e.target.result;
         }
         reader.readAsDataURL(input.files[0]);
+        user_image_loaded = 1;
     }
 }
 
@@ -48,21 +49,19 @@ function go(){
     var col4 = document.getElementById("col4").value;
     var col5 = document.getElementById("col5").value;
     var col6 = document.getElementById("col6").value;
-    // if (user_image != null){
-    //     img = user_image;
-    //     console.log('image uploaded in go is', img);
-    // }
+
 
     console.log("done go funct")
     document.getElementById("res-div").src = "kmeans_img"
 
-
-    bannerImage = document.getElementById('bannerImg');
-    imgData = getBase64Image(bannerImage);
+    user_image = document.getElementById('bannerImg');
+    imgData = getBase64Image(user_image);
     console.log('this is the imgData:', imgData)
     localStorage.setItem("imgData", imgData);
 
-    img = imgData
+    if (user_image_loaded == 1){
+        img = imgData;
+    }
 
     $.ajax({
         type:    "POST",
@@ -75,7 +74,8 @@ function go(){
             col3: col3,
             col4: col4,
             col5: col5,
-            col6: col6
+            col6: col6,
+            userImage: user_image_loaded,
         },
         success: function(data) {
             load_image(data)
