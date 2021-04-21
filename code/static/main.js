@@ -1,3 +1,39 @@
+// import '../static/main.css'
+
+var user_image = null;
+var loadFile = function(event) {
+    var image = document.getElementById('output');
+    image.src = URL.createObjectURL(event.target.files[0]);
+    user_image = image.src; 
+    console.log('hello please log', user_image);
+};
+
+function readURL(input) 
+{
+    document.getElementById("bannerImg").style.display = "block";
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            document.getElementById('bannerImg').src =  e.target.result;
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function getBase64Image(img) {
+    var canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+
+    var dataURL = canvas.toDataURL("image/png");
+    console.log('this is datAURL', dataURL);
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+}
 
 function go(){
     // window.location.reload(true)
@@ -12,9 +48,21 @@ function go(){
     var col4 = document.getElementById("col4").value;
     var col5 = document.getElementById("col5").value;
     var col6 = document.getElementById("col6").value;
+    // if (user_image != null){
+    //     img = user_image;
+    //     console.log('image uploaded in go is', img);
+    // }
 
     console.log("done go funct")
     document.getElementById("res-div").src = "kmeans_img"
+
+
+    bannerImage = document.getElementById('bannerImg');
+    imgData = getBase64Image(bannerImage);
+    console.log('this is the imgData:', imgData)
+    localStorage.setItem("imgData", imgData);
+
+    img = imgData
 
     $.ajax({
         type:    "POST",

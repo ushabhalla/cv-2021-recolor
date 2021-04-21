@@ -5,6 +5,12 @@ from image_segmentation import run_clustering
 from skimage import io, img_as_ubyte
 import matplotlib.colors
 
+from PIL import Image
+import urllib.request
+from io import BytesIO
+import base64 
+
+
 curr_img = None
 
 app = Flask(__name__)
@@ -40,10 +46,26 @@ def get_post_javascript_data():
 
     print(colors)
     k = int(k)
-    img = io.imread(image)
+    print('image before:', image)
+
+    im = Image.open(BytesIO(base64.b64decode(image)))
+    im.save('image.png', 'PNG')
+
+    img = io.imread('image.png')
+
     img = img/255
+    #make sure image is 3 dimensions, not 4    
+    dimension = img.shape[-1]
+    print('image dimension is:', dimension)
+
+    if dimension != 3:
+        if (dimension == 4):
+            img = img[:,:,:3]
+        else:
+            print('image is not valid')
+
+    print('this is the image before clustiner:', img)
     image = run_clustering(k, img, colors)
-    curr_img = image
     print('post done')
     return image
 
