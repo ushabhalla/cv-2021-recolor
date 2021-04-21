@@ -73,16 +73,6 @@ def assign_new_colors_by_luminance(centroids, new_colors):
                           :] = new_colors[new_color_indices[index], :]
     return new_colors_sorted
 
-# def luminance_transfer(centroids, new_colors):
-#     centroid_indices, new_color_indices = sort_luminance(centroids, new_colors)
-#     for color in new_colors:
-
-# def solve_weights(centroids):
-#     all_dists = []
-#     for i in range(centroids.shape[0]):
-#         for j in range(i, centroids.shape[0]):
-#             all_dists.append(centroids[i] - centroids[j])
-#     sigma_r = np.mean(all_dists)
 
 def naive_tint_palette(centroids, new_color):
     """
@@ -114,6 +104,7 @@ def naive_tint_palette(centroids, new_color):
             # clip colors to remain in gamut
             new_colors[i] = np.clip(centroids[i] + diff, 0, 1)
     return new_colors
+
 
 def single_recolor(centroids, new_color):
     """ 
