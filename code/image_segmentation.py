@@ -1,11 +1,12 @@
 import os
 import argparse
 import numpy as np
-from skimage import io, img_as_ubyte
+from skimage import io, img_as_ubyte, filters
 from sklearn.cluster import KMeans
 import random
 import string
 import math
+from kmeans import Kmeans
 
 
 def parse_args():
@@ -22,20 +23,24 @@ def parse_args():
     return parser.parse_args()
 
 
-def image_difference(original, compressed):
+def image_difference(original, compressed, edges):
     """
     Return the difference between the original image and compressed image
     """
+
+    # if black in edges, make that pixel black
     dist = original-compressed
     max_val = np.max(dist)
-    return dist/max_val/2
+    ret = dist/max_val/2
+    ret[edges > 0.2] += ret[edges > 0.2]*.1
+    return ret
 
 
-def naive_recolor(image, clustered_image, indices, new_colors):
+def naive_recolor(image, clustered_image, indices, new_colors, edges):
     """
     Recolor the image using specified new_colors
     """
-    image = image_difference(image, clustered_image)
+    image = image_difference(image, clustered_image, edges)
     indices = np.reshape(indices, (image.shape[0], image.shape[1]))
     for i in range(clustered_image.shape[0]):
         for j in range(clustered_image.shape[1]):
@@ -151,19 +156,26 @@ def cluster(k, image):
 
 
 def run_clustering(k, image, colors):
-    # kmeans, centroids = cluster(k, image)
-    # idx = kmeans.labels_
+    kmeans, centroids = cluster(k, image)
+    idx = kmeans.labels_
+    X_recovered = centroids[idx]
+    X_recovered = np.reshape(X_recovered, (image.shape[0], image.shape[1], 3))
+    edges = get_edges(image)
+    # idx, centroids = run_kmeans(k, image)
     # X_recovered = centroids[idx]
     # X_recovered = np.reshape(X_recovered, (image.shape[0], image.shape[1], 3))
 
-    idx, centroids = run_kmeans(k, image)
-    X_recovered = centroids[idx]
-    X_recovered = np.reshape(X_recovered, (image.shape[0], image.shape[1], 3))
+    # our_kmeans = Kmeans(image, k, 2)
+    # our_kmeans.fit()
+    # idx = our_kmeans.closest_centroids()
+    # centroids = our_kmeans.get_centroids()
+    # X_recovered = centroids[idx]
+    # X_recovered = np.reshape(X_recovered, (image.shape[0], image.shape[1], 3))
 
     print("Recoloring")
     new_colors = colors[:k]
     # print(new_colors)
-    # new_colors = assign_new_colors_by_luminance(centroids, new_colors)
+    new_colors = assign_new_colors_by_luminance(centroids, new_colors)
 
     # # naive palette picker given one color
     # new_color = [247, 146, 242]
@@ -173,7 +185,7 @@ def run_clustering(k, image, colors):
     # new_color = [247, 146, 242]
     # new_colors = assign_colors_by_frequency(image, centroids, new_color)
     # recolor image
-    X_recovered = naive_recolor(image, X_recovered, idx, new_colors)
+    X_recovered = naive_recolor(image, X_recovered, idx, new_colors, edges)
     X_recovered = np.clip(X_recovered, 0, 1)
 
     def rand_str(n): return ''.join(
@@ -189,6 +201,16 @@ def run_clustering(k, image, colors):
     # io.imsave(path, img_as_ubyte(X_recovered))
     print("DONE")
     return path
+
+
+def get_edges(image):
+    image = np.dot(image[..., :3], [.2989, .5870, .1140])
+    x_sobel = filters.sobel_v(image)
+    y_sobel = filters.sobel_h(image)
+    magnitude = np.sqrt(np.power(x_sobel, 2)+np.power(y_sobel, 2))
+    maximum = max(map(max, magnitude))
+    magnitude /= maximum
+    return magnitude
 
 
 def main():

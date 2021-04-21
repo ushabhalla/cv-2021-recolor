@@ -19,26 +19,30 @@ class Kmeans:
         return ret
 
     def closest_centroids(self):
-        n = self.X.shape[0]
+        print("IMAGE SHAPE", self.X.shape)
+        n = self.X.shape[1]
         c_ind = []
+        for j in range(self.X.shape[0]):
+            for i in range(self.X.shape[1]):
+                for k in range(self.X.shape[2]):
+                    dist = np.inf
+                    closest = 0
+                    x = self.X[j][i][k]
 
-        for i in range(n):
-            dist = np.inf
-            closest = 0
-            x = self.X[i]
+                    for c in range(len(self.cluster_centers_)):
+                        d = np.sqrt(np.sum((x - self.cluster_centers_[c])**2))
+                        if d < dist:
+                            closest = c
+                            dist = d
 
-            for c in range(len(self.cluster_centers_)):
-                d = np.sqrt(np.sum((x- self.cluster_centers_[c])**2))
-                if d < dist:
-                    closest = c
-                    dist = d
-
-            c_ind.append(closest)
+                    c_ind.append(closest)
         c_ind = np.array(c_ind)
 
         self.labels_ = c_ind
         return c_ind
 
+    def get_centroids(self):
+        return self.cluster_centers_
 
     def update_centroids(self, centroid_indices):
         clusters = {}
@@ -62,7 +66,6 @@ class Kmeans:
             self.cluster_centers_ = centers
             return False
         return True
-
 
     def fit(self):
         foo = False
