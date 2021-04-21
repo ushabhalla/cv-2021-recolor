@@ -3,6 +3,8 @@ import argparse
 import numpy as np
 from skimage import io, img_as_ubyte
 from sklearn.cluster import KMeans
+import random
+import string
 
 
 def parse_args():
@@ -117,12 +119,18 @@ def run_clustering(k, image, colors):
     # recolor image
     X_recovered = naive_recolor(image, X_recovered, idx, new_colors)
     X_recovered = np.clip(X_recovered, 0, 1)
-    print("Output saved to output/" + "output.jpeg")
-    io.imsave("output/" + "output.jpeg", img_as_ubyte(X_recovered))
-    io.imsave("static/" + "output.jpeg", img_as_ubyte(X_recovered))
-    print("DONE")
-    return "static/output.jpeg"
+    rand_str = lambda n: ''.join([random.choice(string.ascii_lowercase) for i in range(n)])
+    # Now to generate a random string of length 10
+    s = rand_str(10)  
+    print('random string', s)
 
+    path = "static/" + s + ".jpeg"
+    print("Output saved to output/" + path)
+
+    io.imsave(path, img_as_ubyte(X_recovered))
+    # io.imsave(path, img_as_ubyte(X_recovered))
+    print("DONE")
+    return path
 
 def main():
     args = parse_args()
@@ -132,7 +140,7 @@ def main():
     run_clustering(args.k, image, [[186, 199, 219], [116, 96, 150],
                                    [209, 145, 82], [220, 232, 209]])
 
-    io.imshow("output/output.jpeg")
+    io.imshow(path)
     io.show()
 
     # webbrowser.open(
