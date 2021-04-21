@@ -76,7 +76,7 @@ def run_clustering(k, image, colors):
     # new_colors = recolor.single_recolor(centroids, new_color)
 
     # recolor image
-    X_recovered = recolor.recolor_image(image, X_recovered, idx, new_colors)
+    X_recovered = recolor.recolor_image(image, X_recovered, idx, new_colors, edges)
     X_recovered = np.clip(X_recovered, 0, 1)
 
     def rand_str(n): return ''.join(

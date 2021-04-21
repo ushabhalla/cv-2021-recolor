@@ -1,6 +1,6 @@
 import numpy as np
 
-def image_difference(original, clustered):
+def image_difference(original, clustered, edges):
     """
     Return the difference normalized between the original image and clustered image. This removes the original color from the image so that new color can be added. The normalization helps preserve some of the edges or outlines in the image that are not present in the clustering.
 
@@ -8,12 +8,15 @@ def image_difference(original, clustered):
     :param clustered: the clustered image
     :return: an array of image size
     """
+    # if black in edges, make that pixel black
     dist = original-clustered
     max_val = np.max(dist)
-    return dist/max_val/2 + 0.25
+    ret = dist/max_val/2
+    ret[edges > 0.2] += ret[edges > 0.2]*.1
+    return ret
 
 
-def recolor_image(image, clustered_image, indices, new_colors):
+def recolor_image(image, clustered_image, indices, new_colors, edges):
     """
     Recolor the image using specified new_colors.
 
@@ -23,7 +26,7 @@ def recolor_image(image, clustered_image, indices, new_colors):
     :param new_colors: [k x 3] array of the new colors for each segment
     :return: an array of size image recolored
     """
-    image = image_difference(image, clustered_image)
+    image = image_difference(image, clustered_image, edges)
     # reshape indices to be same shape as image
     indices = np.reshape(indices, (image.shape[0], image.shape[1]))
     for i in range(clustered_image.shape[0]):
