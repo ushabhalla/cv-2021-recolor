@@ -1,5 +1,6 @@
 
 function go(){
+    // window.location.reload(true)
     document.getElementById("loading").classList.remove("hidden");
     document.getElementById("res-div").classList.add("hidden");
     document.getElementById("res-div").src = ""
