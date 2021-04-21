@@ -15,3 +15,5 @@ function go(){
     })
 }
 
+// python -m pip install Flask==1.1.2
+// 

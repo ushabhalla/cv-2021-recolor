@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request
 import json
 
-from image_segmentation import run_kmeans
+from image_segmentation import run_clustering
+from skimage import io, img_as_ubyte
 
 curr_img = None
 
@@ -22,8 +23,9 @@ def get_javascript_data(jsdata):
 def get_post_javascript_data():
     image = request.form['image']
     k = request.form['kk']
-
-    run_kmeans(k, image)
+    k = int(k)
+    img = io.imread(image)
+    image = run_clustering(k, img)
     curr_img = image
     return image
 
