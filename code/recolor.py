@@ -86,9 +86,16 @@ def single_recolor(centroids, new_color):
     new_color = np.divide(new_color, 255)
     index = 0
     new_colors = np.zeros((centroids.shape[0], centroids.shape[1]))
+
+    # if only one color is given, expand the dims
+    if new_color.ndim == 1:
+        np.expand_dims(new_color, 0)
+
+    new_luminance = []
+    for i in range(new_color.shape[0]):
+        new_luminance.append(0.2126*new_color[i, 0] + 0.7152*new_color[i, 1] + 0.0722*new_color[i, 2])
+
     # compare luminance to find where new_color should appear
-    new_luminance = 0.2126*new_color[0] + \
-        0.7152*new_color[1] + 0.0722*new_color[2]
     min_dist = 10000000000
     for i in range(centroids.shape[0]):
         centroid_luminance = 0.2126 * \
