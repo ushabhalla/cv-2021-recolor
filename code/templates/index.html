@@ -46,7 +46,7 @@
 
     </div>
     <div class="col-6">
-        <h4>CHOOSE YOUR IMAGE</h4>
+        <h4>CHOOSE YOUR IMAGE...</h4>
         <select name="imgselector" id="imgpath">
             <option value="static/field.jpeg">1</option>
             <option value="static/irises.jpeg">2</option>
@@ -55,7 +55,33 @@
             <option value="static/trees.jpeg">5</option>
           </select>
     </div>
+    <div class="col-6">
+        <h4>...OR UPLOAD YOUR OWN</h4>
+        <input type='file' id="uploadBannerImage" onchange="readURL(this);" />
+        <img src="" id="bannerImg" style="width: 400px;"/>
+
+        <!-- <div class="container">
+            <div class="row">
+              <div class="col-sm-offset-2 col-sm-8"><br><br>
+          <div class="form-group">
+          <div class="input-group">
+            <input type="text" class="form-control" readonly>
+          <div class="input-group-btn">
+            <span class="fileUpload btn btn-success">
+                <span class="upl" id="upload">Upload single file</span>
+                <input type="file" class="upload up" id="up" onchange="readURL(this);" />
+              </span><!-- btn-orange -->
+           <!-- </div><!-- btn -->
+           <!-- </div><!-- group -->
+           <!-- </div>form-group --> --> -->
+                <!-- </div>
+              </div>
+            </div>  -->
+
+    </div>
 </div>
+
+
 
 <div class="box">
     <h3>GO!</h3>
