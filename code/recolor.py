@@ -10,7 +10,7 @@ def image_difference(original, clustered):
     """
     dist = original-clustered
     max_val = np.max(dist)
-    return dist/max_val/2
+    return dist/max_val/2 + 0.25
 
 
 def recolor_image(image, clustered_image, indices, new_colors):
