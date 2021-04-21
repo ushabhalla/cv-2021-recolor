@@ -41,12 +41,9 @@ def naive_recolor(image, clustered_image, indices, new_colors):
             image[i, j] += new_colors[indices[i, j]]
     return image
 
-
-def assign_new_colors_by_luminance(centroids, new_colors):
-    new_colors = np.divide(new_colors, 255)
+def sort_luminance(centroids, new_colors):
     centroid_luminance = []
     new_luminance = []
-    new_colors_sorted = np.zeros((new_colors.shape[0], new_colors.shape[1]))
     # calculate luminance
     for i in range(centroids.shape[0]):
         centroid_luminance.append(
@@ -55,14 +52,32 @@ def assign_new_colors_by_luminance(centroids, new_colors):
             0.2126*new_colors[i, 0] + 0.7152*new_colors[i, 1] + 0.0722*new_colors[i, 2])
     centroid_indices = np.argsort(centroid_luminance)
     new_color_indices = np.argsort(new_luminance)
+    return centroid_indices, new_color_indices
+
+def assign_new_colors_by_luminance(centroids, new_colors):
+    new_colors = np.divide(new_colors, 255)
+    new_colors_sorted = np.zeros((new_colors.shape[0], new_colors.shape[1]))
+    centroid_indices, new_color_indices = sort_luminance(centroids, new_colors)
     # reassign indices of new_color to match centroids
     for index in new_color_indices:
         new_colors_sorted[centroid_indices[index],
                           :] = new_colors[new_color_indices[index], :]
     return new_colors_sorted
 
+# def luminance_transfer(centroids, new_colors):
+#     centroid_indices, new_color_indices = sort_luminance(centroids, new_colors)
+#     for color in new_colors:
+
+# def solve_weights(centroids):
+#     all_dists = []
+#     for i in range(centroids.shape[0]):
+#         for j in range(i, centroids.shape[0]):
+#             all_dists.append(centroids[i] - centroids[j])
+#     sigma_r = np.mean(all_dists)
 
 def naive_palette(centroids, new_color):
+    """ Currently this just tints the image by whatever new_color is
+    """
     new_color = np.divide(new_color, 255)
     index = 0
     new_colors = np.zeros((centroids.shape[0], centroids.shape[1]))
@@ -84,6 +99,7 @@ def naive_palette(centroids, new_color):
         else:
             # clip colors to remain in gamut
             new_colors[i] = np.clip(centroids[i] + diff, 0, 1)
+            # new_colors[i] = centroids[i]
     return new_colors
 
 
@@ -111,8 +127,8 @@ def run_clustering(k, image, colors):
     new_colors = colors[:k]
     print(new_colors)
     new_colors = assign_new_colors_by_luminance(centroids, new_colors)
-
-    # naive palette picker given one color
+    
+    # # naive palette picker given one color
     # new_color = [247, 146, 242]
     # new_colors = naive_palette(centroids, new_color)
 
