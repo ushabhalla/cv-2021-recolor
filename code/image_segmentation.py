@@ -8,7 +8,6 @@ import string
 import math
 from kmeans import Kmeans
 import recolor
-from kmeans import Kmeans
 
 
 def parse_args():
@@ -69,17 +68,13 @@ def run_clustering(k, image, colors):
 
     print("Recoloring")
     new_colors = colors[:k]
-    # print(new_colors)
     new_colors = recolor.assign_new_colors_by_luminance(centroids, new_colors)
 
-    # # naive palette picker given one color
-    new_color = [247, 146, 242]
-    # new_colors = recolor.naive_palette(centroids, new_color)
+    # naive palette picker given one color
+    # new_color = [247, 146, 242]
+    # new_colors = recolor.naive_tint_palette(centroids, new_color)
     # new_colors = recolor.single_recolor(centroids, new_color)
 
-    # # new coloring algorithm
-    # new_color = [247, 146, 242]
-    # new_colors = assign_colors_by_frequency(image, centroids, new_color)
     # recolor image
     X_recovered = recolor.recolor_image(image, X_recovered, idx, new_colors)
     X_recovered = np.clip(X_recovered, 0, 1)
