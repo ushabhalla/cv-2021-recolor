@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8">
+        <title>Art Color Picker</title>
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+        <link rel="stylesheet" href="static/main.css"/>
+        <!--Feel free to add more CSS files as needed-->
+        <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
+    </head>
+<body>
+
+<div class="header">
+    <h3>Art Color Picker</h3>
+</div>
+
+<div>
+<h3>Image Options:</h3>
+<img src="static/field.jpeg" class="img-option" id="1">
+<img src="static/irises.jpeg" class="img-option" id="2">
+<img src="static/lotus.jpeg" class="img-option" id="3">
+<img src="static/rabbit.jpeg" class="img-option" id="4">
+<img src="static/trees.jpeg" class="img-option" id="5">
+</div>
+
+<div >
+    <div class="col-6">
+    <h4>Choose number of colors:</h4>
+    <select name="kmeans" id="kmeansval">
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+      </select>
+    </div>
+    <div class="col-6">
+        <h4>Choose image:</h4>
+        <select name="imgselector" id="imgpath">
+            <option value="static/field.jpeg">1</option>
+            <option value="static/irises.jpeg">2</option>
+            <option value="static/lotus.jpeg">3</option>
+            <option value="static/rabbit.jpeg">4</option>
+            <option value="static/trees.jpeg">5</option>
+          </select>
+    </div>
+</div>
+
+<div>
+    <h3>GO!</h3>
+    <button onclick=go()>GO</button>
+</div>
+
+<script type="text/javascript" src="static/main.js"></script>

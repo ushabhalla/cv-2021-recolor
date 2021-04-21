@@ -4,15 +4,19 @@ import numpy as np
 from sklearn.cluster import KMeans
 import argparse
 import random
+import webbrowser
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description='Machine Learning img_compression (Problem 1)')
-    parser.add_argument('-d', help='path to data file',
-                        default='../data/field.jpeg')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-d', help='path to data file', nargs='?',
+                        default='../data/lotus.jpeg')
     parser.add_argument(
-        '-o', help='path to output directory', default='output')
+        '-o', help='path to output directory', nargs='?', default='output')
+    parser.add_argument(
+        'k', help='number of k means clusters', nargs='?', default=4)
+    parser.add_argument(
+        '--gui', help='GUI', nargs='?', default='False')
     return parser.parse_args()
 
 
@@ -23,21 +27,23 @@ def image_distance(original, compressed):
 
     :param original: original image
     :param compressed: compressed image
-    :return: image distance value as float
+    :return: distance from each pixel in image and clustered image
     """
-    return np.linalg.norm(abs(original-compressed))
+    return original-compressed
 
 
-def main():
-    np.random.seed(1)
-    random.seed(1)
-    args = parse_args()
-    # Use io to read in the image pixel data
-    image = io.imread(args.d)
-    # # Uncomment these lines if you'd like to view the original image
-    # io.imshow(image)
-    # io.show()
-    print(f"Read in {args.d}")
+def naive_recolor(image, clustered_image, indices, new_colors):
+    image = image_distance(image, clustered_image)
+    indices = np.reshape(indices, (image.shape[0], image.shape[1]))
+    for i in range(clustered_image.shape[0]):
+        for j in range(clustered_image.shape[1]):
+            image[i, j] += new_colors[indices[i, j]]
+    return image
+
+
+def run_kmeans(arg_k, arg_d):
+    print("RUNNING KMEANS")
+    image = io.imread(arg_d)
     # Get the number of rows and columns
     rows = image.shape[0]
     cols = image.shape[1]
@@ -58,7 +64,7 @@ def main():
     X = image.reshape(image.shape[0]*image.shape[1], 3)
 
     # Number of clusters
-    K = 8
+    K = int(arg_k)
     # Maximum number of times KMeans should run
     max_iters = 20
 
@@ -69,30 +75,37 @@ def main():
     centroids = kmeans.cluster_centers_
     idx = kmeans.labels_
 
-    if not os.path.exists(args.o):
-        os.makedirs(args.o)
-
-    with open(args.o + "/centroids.txt", 'w+') as f:
-        for c in centroids:
-            f.write("%s\n" % c)
-
-    with open(args.o + "/indices.txt", 'w+') as f:
-        for i in idx:
-            f.write("%s\n" % i)
-
     # Get the compressed version of data X
     X_recovered = centroids[idx]
 
-    print(f"Image Distance: {image_distance(X, X_recovered)}")
+    # print(f"Image Distance: {image_distance(X, X_recovered)}")
 
     # Reshape X_recovered into a 1-dimensional np array in order for io to display
     X_recovered = np.reshape(X_recovered, (rows, cols, 3))
+    new_colors = [[.937, .258, .96], [.25, .96, .25],
+                  [.3, .4, .5], [.12, .23, .45]]
+    X_recovered = naive_recolor(image, X_recovered, idx, new_colors)
+
     io.imshow(X_recovered)
     io.show()
 
     # Save the compressed version of the original image
-    io.imsave(args.o + "/output.jpg", img_as_ubyte(X_recovered))
+    io.imsave(args.o + "/output2.jpg", img_as_ubyte(X_recovered))
     print("Saved compressed image")
+
+
+def main():
+    args = parse_args()
+    # Use io to read in the image pixel data
+
+    webbrowser.open(
+        'file://' + os.path.realpath('../frontend/index.html'), new=2)
+
+    if args.gui == 'False':
+        run_kmeans(args.k, args.d)
+    else:
+        args.d = None
+        args.k = None
 
 
 if __name__ == '__main__':
