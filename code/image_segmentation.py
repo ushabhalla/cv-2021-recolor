@@ -41,6 +41,7 @@ def naive_recolor(image, clustered_image, indices, new_colors):
 
 
 def assign_new_colors_by_luminance(centroids, new_colors):
+    new_colors = np.divide(new_colors, 255)
     centroid_luminance = []
     new_luminance = []
     new_colors_sorted = np.zeros((new_colors.shape[0], new_colors.shape[1]))
@@ -59,13 +60,38 @@ def assign_new_colors_by_luminance(centroids, new_colors):
     return new_colors_sorted
 
 
+def naive_palette(centroids, new_color):
+    new_color = np.divide(new_color, 255)
+    index = 0
+    new_colors = np.zeros((centroids.shape[0], centroids.shape[1]))
+    # compare luminance to find where new_color should appear
+    new_luminance = 0.2126*new_color[0] + \
+        0.7152*new_color[1] + 0.0722*new_color[2]
+    min_dist = 10000000000
+    for i in range(centroids.shape[0]):
+        centroid_luminance = 0.2126 * \
+            centroids[i, 0] + 0.7152*centroids[i, 1] + 0.0722*centroids[i, 2]
+        if min_dist > abs(new_luminance - centroid_luminance):
+            min_dist = abs(new_luminance - centroid_luminance)
+            index = i
+    # select palette by subtracting same distance from each value
+    diff = new_color - centroids[index]
+    for i in range(centroids.shape[0]):
+        if i == index:
+            new_colors[i] = new_color
+        else:
+            # clip colors to remain in gamut
+            new_colors[i] = np.clip(centroids[i] + diff, 0, 1)
+    return new_colors
+
+
 def cluster(k, image):
     print("Clustering")
 
     X = image.reshape(image.shape[0]*image.shape[1], 3)
     K = k
 
-    kmeans = KMeans(n_clusters=K, max_iter=20)
+    kmeans = KMeans(n_clusters=K, max_iter=5)
     kmeans.fit(X)
     centroids = kmeans.cluster_centers_
     print("Centroids", centroids)
@@ -81,8 +107,14 @@ def run_clustering(k, image, colors):
 
     print("Recoloring")
     new_colors = colors[:k]
-    new_colors = np.array(new_colors)/255
+    print(new_colors)
     new_colors = assign_new_colors_by_luminance(centroids, new_colors)
+
+    # naive palette picker given one color
+    # new_color = [247, 146, 242]
+    # new_colors = naive_palette(centroids, new_color)
+
+    # recolor image
     X_recovered = naive_recolor(image, X_recovered, idx, new_colors)
     X_recovered = np.clip(X_recovered, 0, 1)
     print("Output saved to output/" + "output.jpeg")
