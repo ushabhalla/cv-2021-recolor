@@ -19,6 +19,6 @@ Contains code for our own implementation of k-means
 Contains code for connecting our program to the frontend gui
 
 ## How to Run the Program
-To run locally, within the code directory run: python image_segmentation.py -d <path to data image> -k <value of k> -o <path to store output>
+To run locally, within the code directory run: python image_segmentation.py -d \<path to data image\> -k \<value of k\> -o \<path to store output\>
   
 To run the GUI, run: flask run
