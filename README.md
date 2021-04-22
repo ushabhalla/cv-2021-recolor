@@ -4,21 +4,21 @@ Final project for Computer Vision Spring 2021 @ Brown University by Usha Bhalla,
 Read our paper here:
 https://www.overleaf.com/read/pdgpftwjbytq
 
-##Project Overview
+## Project Overview
 
-###image_segmentation.py
+### image_segmentation.py
 Contains code for running k-means and recoloring, our main file
 
-###recolor.py
+### recolor.py
 Contains code for all the recolor functions
 
-###kmeans.py
+### kmeans.py
 Contains code for our own implementation of k-means
 
-###app.py
+### app.py
 Contains code for connecting our program to the frontend gui
 
-##How to Run the Program
+## How to Run the Program
 To run locally, within the code directory run: python image_segmentation.py -d <path to data image> -k <value of k> -o <path to store output>
   
 To run the GUI, run: flask run
